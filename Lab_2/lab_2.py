@@ -1,69 +1,69 @@
 import pandas as pd
 
-# Task 1: Upload data
+# 1) Загрузить данные (read_csv())
 data = pd.read_csv("math_students.csv")
 
-# Task 2: Print the first and last 10 rows of the table
-print("First 10 rows:")
+# 2) Вывести первые и последние 10 строк таблицы (head(), tail())
+print("Первые 10 строк:")
 print(data.head(10))
-print("\nLast 10 rows:")
+print("\nПоследние 10 строк:")
 print(data.tail(10))
 
-# Task 3: Output the number of objects and their characteristics
-print("\nNumber of objects and their characteristics:")
+# 3) Вывести число объектов и их характеристик
+print("\nКоличество объектов и их характеристики:")
 print(data.shape)
 
-# Task 4: Output the names of all columns
-print("\nColumn names:")
+# 4) Вывести названий всех колонок
+print("\nНазвание колонок:")
 print(data.columns)
 
-# Task 5: Are there any gaps in the data
-print("\nCheck for missing values:")
+# 5) Есть ли в данных пропуски
+print("\nПроверка на наличие пробелов:")
 print(data.isnull().any().any())
 
-# Task 6: Output statistics on the values of the signs
-print("\nStatistics on the values of the features:")
+# 6) Вывести статистику по значениям признаков
+print("\nВывести статистику по значениям признаков:")
 print(data.describe())
 
-# Task 7: Output a more detailed description of the feature values
-print("\nDetailed description of feature values:")
+# 7) Вывести более подробное описание значений признаков (количество непустых значений, типов столбцов и объема занимаемой памяти)
+print("\nПодробное описание значений признаков:")
 print(data.info())
 
-# Task 8: What values does one of the signs take (for example, Fjob)?
-print("\nUnique values of Fjob:")
+# 8) Какие значения принимает признак одни из признаков (например, Fjob)? (какие именно значения, сколько уникальных, сколько значений каждого типа)
+print("\nЗначения признака Fjob:")
 print(data['Fjob'].unique())
 
-# Task 9: Withdraw only those students whose guardian is the father and works as a doctor or engineer
+# 9) Вывести только тех студентов, у которых опекуном является отец, и который работает врачом или инженером.
 selected_students = data[(data['guardian'] == 'father') & (data['Fjob'].isin(['doctor', 'engineer']))]
-print("\nStudents whose guardian is the father and works as a doctor or engineer:")
+print("\nВывести только тех студентов, у которых опекуном является отец, и который работает врачом или инженером.")
 print(selected_students)
 
-# Task 10: Create a "study_time_ratio" attribute
+# 10) Создать признак "study_time_ratio", который будет отражать соотношение времени, затраченного на учебу (study_time), к общему времени, затраченному на учебу и досуг (study_time + leisure_time).
 data['study_time_ratio'] = data['studytime'] / (data['studytime'] + data['freetime'])
 
-# Task 11: Display new size and new columns
-print("\nSize and new columns:")
+# 11) Вывести новый размер, новые колонки
+print("\nНовый размер и колонки:")
 print(data.shape)
 print(data.columns)
 
-# Task 12: Display the most common number of unreleased items
-print("\nMost common number of unreleased items:")
+# 12) Вывести наиболее распространенное количество несданных предметов
+print("\nНаиболее распространенное количество несданных предметов:")
 print(data['failures'].mode().iloc[0])
 
-# Task 13: Find the number of students whose mother and father work
+# 13) Найдите количество студентов, чья мать и отец работают.
 working_parents_count = data[(data['Mjob'].isin(['teacher', 'health', 'services', 'at_home', 'other']))
                             & (data['Fjob'].isin(['teacher', 'health', 'services', 'at_home', 'other']))].shape[0]
-print("\nNumber of students whose mother and father work:", working_parents_count)
+print("\nКоличество студентов, чья мать и отец работают.:", working_parents_count)
 
-# Task 14: Find the maximum age of students whose both parents work in the service sector (police)
+# 14) Найдите максимальный возраст студентов, у которых оба родителя работают в сфере услуг (полиции)
 max_age = data[(data['Mjob'].isin(['services', 'police'])) & (data['Fjob'].isin(['services', 'police']))]['age'].max()
-print("\nMaximum age of students whose both parents work in the service sector (police):", max_age)
+print("\nМаксимальный возраст студентов, у которых оба родителя работают в сфере услуг (полиции):", max_age)
 
-# Task 15: Find the number of students who have a grade for the first semester above the average score
+# 15) Найдите количество студентов, имеющих оценку за первый семестр выше среднего балла.
 above_average_count = data[data['G1'] > data['G1'].mean()].shape[0]
-print("\nNumber of students with a grade for the first semester above the average score:", above_average_count)
+print("\nКоличество студентов, имеющих оценку за первый семестр выше среднего балла.:", above_average_count)
 
-# Task 16: Divide the students into two groups based on mothers' education and compare average final scores
+# 16) Разделите студентов на две группы: те, у которых матери имеют высшее образование, и те, у которых матери не имеют высшего образования. Сравните средние итоговые оценки между этими двумя группами.
 grouped_data = data.groupby('Medu')['G3'].mean()
-print("\nAverage final scores based on mothers' education:")
+print("\nРезультат деления студентов на две группы:")
 print(grouped_data)
