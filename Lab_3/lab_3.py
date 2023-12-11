@@ -1,103 +1,53 @@
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.datasets import load_boston
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression, Lasso
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.model_selection import cross_val_score
 
-# Task 1: Download the "Boston Housing" dataset
-boston_data = load_boston()
-boston_df = pd.DataFrame(boston_data.data, columns=boston_data.feature_names)
-boston_df['PRICE'] = boston_data.target
+titanic_data = pd.read_csv('titanic.csv')
 
-# Task 2: Study the structure and content of the data
-print("Dataset structure:")
-print(boston_df.info())
+# 0. Первичный анализ данных
+print(titanic_data.info())
+print(titanic_data.describe())
 
-# Task 3: Preliminary analysis of the data
-print("\nSummary statistics:")
-print(boston_df.describe())
+print(titanic_data.isnull().sum())
 
-# Check for missing values
-print("\nMissing values:")
-print(boston_df.isnull().sum())
+titanic_data = titanic_data.dropna()
 
-# Check for outliers using boxplots
-plt.figure(figsize=(15, 8))
-sns.boxplot(data=boston_df, orient="h")
-plt.title("Boxplot of Boston Housing Dataset")
+# 1. Построить график, показывающий количество выживших и погибших пассажиров в зависимости от порта посадки (признак Embarked).
+sns.countplot(x='Embarked', hue='Survived', data=titanic_data)
+plt.title('Выжившие и погибшие пассажиры в зависиомти от порта посадки')
 plt.show()
 
-# Check correlations between variables
-correlation_matrix = boston_df.corr()
-plt.figure(figsize=(12, 10))
-sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm")
-plt.title("Correlation Matrix")
+# 2. Исследовать распределение цен на билеты среди пассажиров в каждом классе каюты (признак Pclass), используя гистограммы.
+plt.figure(figsize=(12, 6))
+sns.histplot(x='Fare', hue='Pclass', data=titanic_data, bins=30, kde=True)
+plt.title('Исследование цен на билеты в каждом классе каюты')
 plt.show()
 
-# Task 4: Compare average real estate prices in different areas of Boston
-average_prices_by_area = boston_df.groupby('RAD')['PRICE'].mean()
-print("\nAverage real estate prices by area:")
-print(average_prices_by_area)
-
-# Identify the most expensive and cheapest areas
-most_expensive_area = average_prices_by_area.idxmax()
-cheapest_area = average_prices_by_area.idxmin()
-print("\nMost expensive area:", most_expensive_area)
-print("Cheapest area:", cheapest_area)
-
-# Task 5: Investigate the influence of various factors on the price of real estate
-influence_factors = ['CRIM', 'RM', 'AGE', 'DIS', 'TAX']
-for factor in influence_factors:
-    plt.figure(figsize=(8, 5))
-    sns.scatterplot(x=boston_df[factor], y=boston_df['PRICE'])
-    plt.title(f'Real Estate Price vs {factor}')
-    plt.show()
-
-# Task 6: Split the data into training and test samples
-X = boston_df.drop('PRICE', axis=1)
-y = boston_df['PRICE']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-# Task 7: Train a linear regression model on a training sample
-linear_reg_model = LinearRegression()
-linear_reg_model.fit(X_train, y_train)
-
-# Task 8: Evaluate the quality of the model on the test sample
-y_pred = linear_reg_model.predict(X_test)
-mae = mean_absolute_error(y_test, y_pred)
-mse = mean_squared_error(y_test, y_pred)
-rmse = np.sqrt(mse)
-r2 = r2_score(y_test, y_pred)
-
-print("\nModel Evaluation Metrics:")
-print(f"Mean Absolute Error (MAE): {mae}")
-print(f"Mean Squared Error (MSE): {mse}")
-print(f"Root Mean Squared Error (RMSE): {rmse}")
-print(f"R^2 Score: {r2}")
-
-# Task 9: Improve the quality of the model by using Lasso regularization
-lasso_model = Lasso(alpha=0.01)
-lasso_model.fit(X_train, y_train)
-
-# Task 10: Visualize the results of the prediction
-y_pred_lasso = lasso_model.predict(X_test)
-plt.figure(figsize=(10, 6))
-plt.scatter(y_test, y_pred_lasso)
-plt.xlabel("Actual Prices")
-plt.ylabel("Predicted Prices")
-plt.title("Actual vs Predicted Prices (Lasso)")
+# 3. Проверить, есть ли зависимость между классом каюты (признак Pclass) и выживаемостью пассажиров. Построить столбчатую диаграмму, где по горизонтальной оси будут классы каюты, а по вертикальной - процент выживших и процент невыживших в каждом классе.
+survival_by_class = titanic_data.groupby('Pclass')['Survived'].value_counts(normalize=True).unstack()
+survival_by_class.plot(kind='bar', stacked=True)
+plt.title('Зависимость выживаемости от класса каюты')
+plt.xlabel('Cabin Class')
+plt.ylabel('Survival Percentage')
 plt.show()
 
-# Task 11: Perform cross-validation of the model
-cv_mse = cross_val_score(lasso_model, X, y, scoring='neg_mean_squared_error', cv=5)
-cv_rmse = np.sqrt(-cv_mse)
-cv_r2 = cross_val_score(lasso_model, X, y, scoring='r2', cv=5)
+# 4. Изучить корреляцию между возрастом пассажиров и стоимостью их билетов. Построить точечную диаграмму, где по горизонтальной оси будет возраст, а по вертикальной - стоимость билета. Разделить точки на группы по классу каюты и выделить их разными цветами.
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x='Age', y='Fare', hue='Pclass', data=titanic_data)
+plt.title('Корреляция между возрастом пассажиров и стоимостью их билетов')
+plt.show()
 
-print("\nCross-Validation Metrics:")
-print(f"Cross-Validation Mean Squared Error (CV MSE): {cv_mse.mean()}")
-print(f"Cross-Validation Root Mean Squared Error (CV RMSE): {cv_rmse.mean()}")
-print(f"Cross-Validation R^2 Score (CV R^2): {cv_r2.mean()}")
+# 5. Сравнить распределение выживаемости пассажиров с разным количеством родственников на борту (признакы SibSp - число братьев/сестер/супругов и Parch - число родителей/детей). Построить график, где по горизонтальной оси будет количество родственников, а по вертикальной - процент выживших и невыживших пассажиров.
+relatives_data = titanic_data[['SibSp', 'Parch', 'Survived']]
+survival_by_relatives = relatives_data.groupby(['SibSp', 'Parch'])['Survived'].value_counts(normalize=True).unstack()
+survival_by_relatives.plot(kind='bar', stacked=True)
+plt.title('Распределение выживаемости пассажиров с разным количеством родственников на борту')
+plt.xlabel('Number of Relatives')
+plt.ylabel('Survival Percentage')
+plt.show()
+
+# 6. Определить соотношение мужчин и женщин среди пассажиров разных классов каюты. Построить круговую диаграмму, где каждый сектор будет отображать процентное соотношение мужчин и женщин в каждом классе.
+gender_by_class = titanic_data.groupby('Pclass')['Sex'].value_counts(normalize=True).unstack()
+gender_by_class.plot(kind='pie', subplots=True, autopct='%1.1f%%', figsize=(15, 5))
+plt.title('Соотношение мужчин и женщин среди пассажиров разных классов каюты')
+plt.show()
