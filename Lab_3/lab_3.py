@@ -27,27 +27,29 @@ plt.show()
 survival_by_class = titanic_data.groupby('Pclass')['Survived'].value_counts(normalize=True).unstack()
 survival_by_class.plot(kind='bar', stacked=True)
 plt.title('Зависимость выживаемости от класса каюты')
-plt.xlabel('Cabin Class')
-plt.ylabel('Survival Percentage')
+plt.xlabel('Класс каюты')
+plt.ylabel('% выживаемости')
 plt.show()
 
 # 4. Изучить корреляцию между возрастом пассажиров и стоимостью их билетов. Построить точечную диаграмму, где по горизонтальной оси будет возраст, а по вертикальной - стоимость билета. Разделить точки на группы по классу каюты и выделить их разными цветами.
 plt.figure(figsize=(12, 6))
 sns.scatterplot(x='Age', y='Fare', hue='Pclass', data=titanic_data)
+plt.xlabel('Возраст')
+plt.ylabel('Стоимость билетов')
 plt.title('Корреляция между возрастом пассажиров и стоимостью их билетов')
 plt.show()
 
-# 5. Сравнить распределение выживаемости пассажиров с разным количеством родственников на борту (признакы SibSp - число братьев/сестер/супругов и Parch - число родителей/детей). Построить график, где по горизонтальной оси будет количество родственников, а по вертикальной - процент выживших и невыживших пассажиров.
-relatives_data = titanic_data[['SibSp', 'Parch', 'Survived']]
-survival_by_relatives = relatives_data.groupby(['SibSp', 'Parch'])['Survived'].value_counts(normalize=True).unstack()
-survival_by_relatives.plot(kind='bar', stacked=True)
-plt.title('Распределение выживаемости пассажиров с разным количеством родственников на борту')
-plt.xlabel('Number of Relatives')
-plt.ylabel('Survival Percentage')
-plt.show()
-
-# 6. Определить соотношение мужчин и женщин среди пассажиров разных классов каюты. Построить круговую диаграмму, где каждый сектор будет отображать процентное соотношение мужчин и женщин в каждом классе.
-gender_by_class = titanic_data.groupby('Pclass')['Sex'].value_counts(normalize=True).unstack()
-gender_by_class.plot(kind='pie', subplots=True, autopct='%1.1f%%', figsize=(15, 5))
-plt.title('Соотношение мужчин и женщин среди пассажиров разных классов каюты')
-plt.show()
+# # 5. Сравнить распределение выживаемости пассажиров с разным количеством родственников на борту (признакы SibSp - число братьев/сестер/супругов и Parch - число родителей/детей). Построить график, где по горизонтальной оси будет количество родственников, а по вертикальной - процент выживших и невыживших пассажиров.
+# relatives_data = titanic_data[['SibSp', 'Parch', 'Survived']]
+# survival_by_relatives = relatives_data.groupby(['SibSp', 'Parch'])['Survived'].value_counts(normalize=True).unstack()
+# survival_by_relatives.plot(kind='bar', stacked=True)
+# plt.title('Распределение выживаемости пассажиров с разным количеством родственников на борту')
+# plt.xlabel('Количество родственников')
+# plt.ylabel('% выживаемости')
+# plt.show()
+#
+# # 6. Определить соотношение мужчин и женщин среди пассажиров разных классов каюты. Построить круговую диаграмму, где каждый сектор будет отображать процентное соотношение мужчин и женщин в каждом классе.
+# gender_by_class = titanic_data.groupby('Pclass')['Sex'].value_counts(normalize=True).unstack()
+# gender_by_class.plot(kind='pie', subplots=True, autopct='%1.1f%%', figsize=(15, 5))
+# plt.title('Соотношение мужчин и женщин среди пассажиров разных классов каюты')
+# plt.show()
