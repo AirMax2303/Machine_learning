@@ -49,7 +49,7 @@ plt.ylabel('% выживаемости')
 plt.show()
 
 # 6. Определить соотношение мужчин и женщин среди пассажиров разных классов каюты. Построить круговую диаграмму, где каждый сектор будет отображать процентное соотношение мужчин и женщин в каждом классе.
-gender_by_class = titanic_data.groupby('Pclass')['Sex'].value_counts(normalize=True).unstack()
-gender_by_class.plot(kind='pie', subplots=True, autopct='%1.1f%%', figsize=(15, 5))
+gender_by_class = titanic_data.groupby('Pclass')['Sex'].value_counts().unstack()
+gender_by_class.plot(kind='pie', subplots=True,  autopct='%1.1f%%', figsize=(15, 5))
 plt.title('Соотношение мужчин и женщин среди пассажиров разных классов каюты')
 plt.show()
